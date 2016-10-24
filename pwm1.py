@@ -2,7 +2,7 @@ import time
 import pigpio
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
-
+import sonar_scan
 
 # Hardware SPI configuration:
 SPI_PORT   = 0
@@ -125,8 +125,14 @@ char=0
 
 ck = CHARSET.keys()
 
+sonar = sonar_scan.ranger(p, 21, 20, 2600)
+
 try:
     while True:
+
+        sonar.trig()
+        time.sleep(0.1)
+        distanz = (sonar.read()*34300)/(2*1000000)
 
         values = [0]*8
         for i in range(8):
@@ -140,6 +146,7 @@ try:
 
         temp_strg = str(temp)
 
+        dist_strg = str(distanz)
         
         if len(poti_strg) > 1:
            display(0,str(poti_strg[0]))
@@ -154,24 +161,23 @@ try:
         else:
            display(2,' ')
            display(3,str(temp_strg[0]))
+
+        if distanz <10:
+           display(0,' ')
+           display(1,' ')
+           display(2,' ')
+           display(3,str(dist_strg[0]))
            
-           
-
-
-         
-
-        #        print('poti {0:>4}'.format(poti))
-        #        print('temp {0:>4}'.format(temp))
-
         p.set_PWM_dutycycle(PWM1,poti)
 
-
         update_display()
+
 
 
 except KeyboardInterrupt:
     pass
 
+sonar.cancel()
 p.wave_delete(wid)
 p.stop()
 
