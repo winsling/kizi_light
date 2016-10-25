@@ -27,6 +27,17 @@ CHARSET={
 '7': 0b11100000,
 '8': 0b11111110,
 '9': 0b11100110,
+' .': 0b00000001,
+'0.': 0b11111101,
+'1.': 0b01100001,
+'2.': 0b11011011,
+'3.': 0b11110011,
+'4.': 0b01100111,
+'5.': 0b10110111,
+'6.': 0b00111111,
+'7.': 0b11100001,
+'8.': 0b11111111,
+'9.': 0b11100111,
 'A': 0b11101110,
 'b': 0b00111110,
 'C': 0b10011100,
@@ -121,11 +132,15 @@ for segment in SEG2GPIO:
 for lcd in LCD2GPIO:
    p.set_mode(lcd, pigpio.OUTPUT)
 
+time_flag = 0
+
+start_time = 0
+
 char=0
 
 ck = CHARSET.keys()
 
-sonar = sonar_scan.ranger(p, 21, 20, 2600)
+sonar = sonar_scan.ranger(p, 21, 20, 10000)
 
 try:
     while True:
@@ -162,17 +177,32 @@ try:
            display(2,' ')
            display(3,str(temp_strg[0]))
 
-        if distanz <10:
+
+        p.set_PWM_dutycycle(PWM1,poti)
+
+
+        time_strg=str(time.strftime('%X'))
+
+        if distanz < 10:
+           time_flag = 1
+           start_time = time.time()
+           
+        
+        if time_flag>0:
+           display(0,time_strg[0])
+           display(1,time_strg[1]+'.')
+           display(2,time_strg[3])
+           display(3,time_strg[4])
+        else:
            display(0,' ')
            display(1,' ')
            display(2,' ')
-           display(3,str(dist_strg[0]))
+           display(3,' ')
            
-        p.set_PWM_dutycycle(PWM1,poti)
-
         update_display()
-
-
+        
+        if (time.time()-start_time) > 3:
+           time_flag=0
 
 except KeyboardInterrupt:
     pass
