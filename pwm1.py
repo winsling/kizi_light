@@ -140,7 +140,7 @@ char=0
 
 ck = CHARSET.keys()
 
-sonar = sonar_scan.ranger(p, 21, 20, 10000)
+sonar = sonar_scan.ranger(p, 21, 20, 2600)
 
 try:
     while True:
@@ -163,32 +163,32 @@ try:
 
         dist_strg = str(distanz)
         
-        if len(poti_strg) > 1:
-           display(0,str(poti_strg[0]))
-           display(1,str(poti_strg[1]))
-        else:
-           display(0,' ')
-           display(1,str(poti_strg[0]))
-
-        if len(temp_strg) > 1:
-           display(2,str(temp_strg[0]))
-           display(3,str(temp_strg[1]))
-        else:
-           display(2,' ')
-           display(3,str(temp_strg[0]))
-
-
         p.set_PWM_dutycycle(PWM1,poti)
 
 
         time_strg=str(time.strftime('%X'))
 
-        if distanz < 10:
+        if distanz < 30:
            time_flag = 1
            start_time = time.time()
            
         
-        if time_flag>0:
+        if poti_proz>20:
+           if len(dist_strg) > 1:
+              display(0,str(dist_strg[0]))
+              display(1,str(dist_strg[1]))
+           else:
+              display(0,' ')
+              display(1,str(dist_strg[0]))
+
+           if len(temp_strg) > 1:
+              display(2,str(temp_strg[0]))
+              display(3,str(temp_strg[1]))
+           else:
+              display(2,' ')
+              display(3,str(temp_strg[0]))
+           
+        elif time_flag>0:
            display(0,time_strg[0])
            display(1,time_strg[1]+'.')
            display(2,time_strg[3])
